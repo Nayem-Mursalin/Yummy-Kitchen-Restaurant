@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../providers/AuthProvider";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   const {
@@ -14,7 +15,10 @@ const SignUp = () => {
 
   const onSubmit = (data) => {
     console.log(data);
-    createUser(data.email, data.password).then();
+    createUser(data.email, data.password).then((res) => {
+      const loggedUser = res.user;
+      console.log(loggedUser);
+    });
   };
 
   return (
@@ -122,6 +126,11 @@ const SignUp = () => {
                 ></input>
               </div>
             </form>
+            <p>
+              <small>
+                Already Have an Account? <Link to="/login">Log in</Link>
+              </small>
+            </p>
           </div>
         </div>
       </div>
