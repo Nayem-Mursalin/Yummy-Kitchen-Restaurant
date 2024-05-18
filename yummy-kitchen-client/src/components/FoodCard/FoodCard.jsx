@@ -3,6 +3,8 @@ import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useCart from "../../hooks/useCart";
 
 const FoodCard = ({ item }) => {
   const { name, image, recipe, price, _id } = item;
@@ -10,11 +12,13 @@ const FoodCard = ({ item }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const axiosSecure = useAxiosSecure();
+  const [, refetch] = useCart();
 
-  const handleAddToCart = (food) => {
+  const handleAddToCart = () => {
     if (user && user.email) {
       //Send Data to database
-      console.log(user.email, food);
+      // console.log(user.email, food);
       const cartItem = {
         menuId: _id,
         email: user.email,
@@ -22,7 +26,7 @@ const FoodCard = ({ item }) => {
         image,
         price,
       };
-      axios.post("http://localhost:5008/carts", cartItem).then((res) => {
+      axiosSecure.post("/carts", cartItem).then((res) => {
         console.log(res.data);
         if (res.data.insertedId) {
           Swal.fire({
@@ -32,12 +36,14 @@ const FoodCard = ({ item }) => {
             showConfirmButton: false,
             timer: 1500,
           });
+          //refetch cart for updating item count
+          refetch();
         }
       });
     } else {
       Swal.fire({
         title: "You're not Logged in",
-        text: "You won't be able to revert this!",
+        text: "",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -63,9 +69,7 @@ const FoodCard = ({ item }) => {
         <p>{recipe}</p>
         <div className="card-actions justify-end">
           <button
-            onClick={() => {
-              handleAddToCart(item);
-            }}
+            onClick={handleAddToCart}
             className="btn btn-info border-0 border-b-4 bg-slate-100 border-orange-400"
           >
             Add to Cart
