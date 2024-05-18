@@ -18,6 +18,7 @@ const Login = () => {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
+  console.log("State in the location ", location.state);
 
   useEffect(() => {
     loadCaptchaEnginge(5);
@@ -115,6 +116,7 @@ const Login = () => {
               </div>
               <div className="form-control mt-6">
                 <input
+                  // Apply Disable for Recaptcha
                   disabled={disabled}
                   className="btn btn-primary"
                   type="submit"
