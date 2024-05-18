@@ -28,9 +28,25 @@ async function run() {
         await client.connect();
 
         const menuCollection = client.db("YummyDB").collection("menu");
+        const reviewCollection = client.db("YummyDB").collection("reviews");
+        const cartCollection = client.db("bistroDb").collection("carts");
 
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
+            res.send(result);
+        })
+
+
+        app.get('/reviews', async (req, res) => {
+            const result = await reviewCollection.find().toArray();
+            res.send(result);
+        })
+
+
+        app.post('/carts', async (req, res) => {
+            const item = req.body;
+            console.log(item);
+            const result = await cartCollection.insertOne(item);
             res.send(result);
         })
 
