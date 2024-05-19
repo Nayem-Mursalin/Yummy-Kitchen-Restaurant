@@ -1,11 +1,24 @@
 import { FaGoogle } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
+import useaxiosPublic from "../../hooks/useaxiosPublic";
+import { useNavigate } from "react-router-dom";
 
 const SocialLogin = () => {
   const { googleSignIn } = useAuth();
+  const axiosPublic = useaxiosPublic();
+  const navigate = useNavigate();
+
   const handleGoogleSignin = () => {
-    googleSignIn().then((res) => {
-      console.log(res.user);
+    googleSignIn().then((result) => {
+      console.log(result.user);
+      const userInfo = {
+        email: result.user?.email,
+        name: result.user?.displayName,
+      };
+      axiosPublic.post("/users", userInfo).then((res) => {
+        console(res.data);
+        navigate("/");
+      });
     });
   };
 
