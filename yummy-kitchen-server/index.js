@@ -33,6 +33,13 @@ async function run() {
         const cartCollection = client.db("YummyDB").collection("carts");
 
 
+
+        app.get('/users', async (req, res) => {
+            const result = await userCollection.find().toArray();
+            res.send(result);
+        });
+
+
         //User Api
         app.post('/users', async (req, res) => {
             const user = req.body;
