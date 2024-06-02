@@ -34,8 +34,28 @@ async function run() {
         const cartCollection = client.db("YummyDB").collection("carts");
 
 
+        const varifyToken = async (req, res, next) => {
+            console.log("Verified Token: ", req.headers);
+            const email = req.decoded.email;
+            const query = { email: email }
+            const user = await userCollection.findOne(query);
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ error: true, message: 'forbidden message' });
+            }
+            next()
+        }
 
-        app.get('/users', async (req, res) => {
+
+
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+
+            res.send({ token })
+        })
+
+
+        app.get('/users', varifyToken, async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
         });
