@@ -12,6 +12,7 @@ import {
 } from "firebase/auth";
 import { app } from "../firebase/firebase.config";
 import { GoogleAuthProvider } from "firebase/auth/cordova";
+import axios from "axios";
 export const AuthContext = createContext(null);
 
 const auth = getAuth(app);
@@ -21,6 +22,8 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const googleProvider = new GoogleAuthProvider();
+
+  // const axiosPublic = axiosPublic();
 
   //Create user
   const createUser = (email, password) => {
@@ -57,9 +60,20 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const userInfo = currentUser;
+        axios.post("/jwt", userInfo).then((res) => {
+          if (res.data.token) {
+            localStorage.setItem("access-token", res.data.tokn);
+          }
+        });
+      } else {
+        localStorage.removeItem("access-token");
+      }
       console.log("Current User : ", currentUser);
       setLoading(false);
     });
+
     return () => {
       return unsubscribe();
     };

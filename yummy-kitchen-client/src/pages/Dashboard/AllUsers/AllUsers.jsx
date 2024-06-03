@@ -13,6 +13,26 @@ const AllUsers = () => {
     },
   });
 
+  const handleMakeAdmin = (user) => {
+    fetch(`http://localhost:5000/users/admin/${user._id}`, {
+      method: "PATCH",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.modifiedCount) {
+          refetch();
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: `${user.name} is an Admin Now!`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      });
+  };
+
   const handleDeleteUser = (user) => {
     Swal.fire({
       title: "Are you sure?",
@@ -57,17 +77,21 @@ const AllUsers = () => {
           </thead>
           <tbody>
             {users.map((user, index) => (
-              <tr key={user.id}>
+              <tr key={user._id}>
                 <th>{index + 1}</th>
                 <td>{user.displayName}</td>
                 <td>{user.email}</td>
                 <td>
-                  <button
-                    onClick={() => handleDeleteUser(user._id)}
-                    className="btn bg-orange-500"
-                  >
-                    <FaUsers className="text-white"></FaUsers>
-                  </button>
+                  {user.role === "admin" ? (
+                    "Admin"
+                  ) : (
+                    <button
+                      onClick={() => handleMakeAdmin(user._id)}
+                      className="btn bg-orange-500"
+                    >
+                      <FaUsers className="text-white"></FaUsers>
+                    </button>
+                  )}
                 </td>
                 <td>
                   <button
@@ -82,19 +106,6 @@ const AllUsers = () => {
             {/* row 1 */}
 
             {/* row 2 */}
-            <tr>
-              <th>2</th>
-              <td>Hart Hagerty</td>
-              <td>Desktop Support Technician</td>
-              <td>Purple</td>
-            </tr>
-            {/* row 3 */}
-            <tr>
-              <th>3</th>
-              <td>Brice Swyre</td>
-              <td>Tax Accountant</td>
-              <td>Red</td>
-            </tr>
           </tbody>
         </table>
       </div>
