@@ -55,13 +55,14 @@ export const router = createBrowserRouter([
       //Admin Routes
       //Make Sure that It is under Admin route
       {
-        path: "additem",
+        path: "additems",
         element: (
           // <AdminRoute>
           <AddItems></AddItems>
           // </AdminRoute>
         ),
       },
+
       {
         path: "users",
         element: (

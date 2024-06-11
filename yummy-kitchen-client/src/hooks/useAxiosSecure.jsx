@@ -8,7 +8,7 @@ const useAxiosSecure = () => {
   const navigate = useNavigate();
 
   const axiosSecure = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: "http://localhost:5008",
   });
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const useAxiosSecure = () => {
       }
     );
   }, [logOut, navigate, axiosSecure]);
-  return axiosSecure;
+  return [axiosSecure];
 };
 
 export default useAxiosSecure;
