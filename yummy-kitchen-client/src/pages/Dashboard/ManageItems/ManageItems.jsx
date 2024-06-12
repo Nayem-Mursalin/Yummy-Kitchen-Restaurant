@@ -1,8 +1,36 @@
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import SectionTitle from "../../../components/SectionTitle/SectionTitle";
 import useMenu from "../../../hooks/useMenu";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 const ManageItems = () => {
-  const [menu] = useMenu();
+  const [menu, refetch] = useMenu();
+  const [axiosSecure] = useAxiosSecure();
+
+  const handleDelete = (item) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure.delete(`/menu/${item._id}`).then((res) => {
+          console.log("deleted res", res.data);
+          if (res.data.deletedCount > 0) {
+            refetch;
+            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+          }
+        });
+      }
+    });
+  };
+
   return (
     <div className="w-full">
       <SectionTitle
@@ -14,14 +42,10 @@ const ManageItems = () => {
           {/* head */}
           <thead>
             <tr>
-              <th>
-                <label>
-                  <input type="checkbox" className="checkbox" />
-                </label>
-              </th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>Favorite Color</th>
+              <th>#</th>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Price</th>
               <th>Update</th>
               <th>Delete</th>
             </tr>
@@ -45,18 +69,25 @@ const ManageItems = () => {
                       </div>
                     </div>
                     <div>
-                      <div className="font-bold">Hart Hagerty</div>
+                      <div className="font-bold">{item.name}</div>
                     </div>
                   </div>
                 </td>
-                <td>Zemlak, Daniel and Leannon</td>
-                <td>Purple</td>
+                <td>{item.category}</td>
+                <td className="text-right">${item.price}</td>
                 <td>
-                  <button className="btn btn-ghost btn-xs">details</button>
+                  <Link to={`/dashboard/updateItem/${item._id}`}>
+                    <button className="btn btn-ghost btn-xs">
+                      <FaEdit></FaEdit>
+                    </button>
+                  </Link>
                 </td>
-                <td>
-                  <button className="btn btn-ghost btn-xs">details</button>
-                </td>
+                <button
+                  onClick={() => handleDelete(item)}
+                  className="btn btn-ghost bg-red-600  text-white"
+                >
+                  <FaTrashAlt></FaTrashAlt>
+                </button>
               </tr>
             ))}
           </tbody>
