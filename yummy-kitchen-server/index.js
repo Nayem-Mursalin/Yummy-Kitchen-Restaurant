@@ -117,6 +117,17 @@ async function run() {
             res.send(result);
         })
 
+        // app.get('/admin-stats', verifyToken, verifyAdmin, async (req, res) => {
+        app.get('/admin-stats', async (req, res) => {
+            const users = await userCollection.estimatedDocumentCount();
+            const menuItems = await menuCollection.estimatedDocumentCount();
+
+            res.send({
+                users,
+                menuItems
+            })
+        })
+
 
         //Menu API
         app.get('/menu', async (req, res) => {
