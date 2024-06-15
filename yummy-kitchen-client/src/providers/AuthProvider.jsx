@@ -65,6 +65,7 @@ const AuthProvider = ({ children }) => {
         axios.post("/jwt", userInfo).then((res) => {
           if (res.data.token) {
             localStorage.setItem("access-token", res.data.tokn);
+            setLoading(false);
           }
         });
       } else {
